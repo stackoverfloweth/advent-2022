@@ -1,29 +1,15 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
-    "declaration": true,
-    "esModuleInterop": true,
-    "importHelpers": true,
-    "jsx": "preserve",
-    "lib": [
-      "esnext",
-      "dom",
-      "dom.iterable",
-      "scripthost"
-    ],
-    "module": "esnext",
-    "moduleResolution": "node",
-    "outDir": "./dist/types/",
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    },
+    "strictNullChecks": true,
+    "module": "commonjs",
+    "target": "ES6",
+    "lib":["es2020", "dom"],
+    "noImplicitAny": true,
     "resolveJsonModule": true,
-    "skipLibCheck": true,
+    "esModuleInterop": true,
     "sourceMap": true,
-    "strict": true,
-    "target": "esnext"
-  },
+    "typeRoots": [
+      "./node_modules/@types"
+    ]
+  }
 }

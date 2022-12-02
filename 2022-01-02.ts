@@ -2256,8 +2256,8 @@ function sumCalories(snacks: number[]): number {
   return snacks.reduce((sum, snack) => sum + snack, 0)
 }
 
-function findMax(range: number[]): number {
-  return range.reduce((max, value) => value > max ? value : max, 0)
+function findMaxIndex(range: number[]): number {
+  return range.reduce((maxIndex, value, index) => value > range[maxIndex] ? index : maxIndex, 0)
 }
 
 function solve(): void {
@@ -2265,7 +2265,15 @@ function solve(): void {
   const snacksPerElf = elves.map(getSnacks)
   const totalCaloriesPerElf = snacksPerElf.map(sumCalories)
 
-  console.log(findMax(totalCaloriesPerElf))
+  let top3Sum = 0
+  for (let i=0; i<3; i++) {
+    const topElf = findMaxIndex(totalCaloriesPerElf)
+    top3Sum += totalCaloriesPerElf[topElf]
+
+    totalCaloriesPerElf.splice(topElf, 1)
+  }
+
+  console.log(top3Sum)
 }
 
 solve()
