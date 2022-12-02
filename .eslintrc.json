@@ -1,0 +1,36 @@
+{
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 2020,
+      "project": "./tsconfig.json"
+    },
+    "extends": [
+      "@prefecthq"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "**/*.spec.js",
+          "**/*.spec.ts"
+        ],
+        "env": {
+          "jest": true
+        }
+      }
+    ],
+    "globals": {
+      "defineProps": "readonly",
+      "defineEmits": "readonly",
+      "defineExpose": "readonly"
+    },
+    "settings": {
+      "import/resolver": {
+        "typescript": {
+          "project": "./tsconfig.json"
+        }
+      }
+    }
+  }
