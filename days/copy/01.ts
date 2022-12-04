@@ -1,1 +1,1 @@
-import {input} from './demo'
+import { input } from './demo'

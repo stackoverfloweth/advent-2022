@@ -1,4 +1,4 @@
-import {input} from './input'
+import { input } from './input'
 
 function getSnacks(data: string): number[] {
   return data.split('\n').map(calories => parseInt(calories))
