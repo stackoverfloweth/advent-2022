@@ -1,4 +1,4 @@
-import { input } from './2022-02-input'
+import { input } from './input'
 
 type Rock = 'A' | 'X'
 function isRock(value: unknown): value is Rock {

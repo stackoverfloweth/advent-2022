@@ -1,4 +1,4 @@
-import { input } from './2022-02-input'
+import { input } from './input'
 
 const rock = 'A'
 type Rock = typeof rock
