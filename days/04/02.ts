@@ -6,9 +6,9 @@ type AssignmentString = `${number}-${number}`
 type Assignment = [number, number]
 
 function getSections(input: AssignmentString): Assignment {
-  const [first, second] = input.split('-')
+  const [first, second] = input.split('-').map(Number)
 
-  return [parseInt(first), parseInt(second)]
+  return [first, second]
 }
 
 function checkOverlap(pair: [AssignmentString, AssignmentString]): boolean {

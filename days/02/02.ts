@@ -1,3 +1,4 @@
+/* eslint-disable id-length */
 import { input } from './input'
 
 const rock = 'A'

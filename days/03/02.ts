@@ -23,8 +23,8 @@ function solve(): void {
   let total = 0
 
   while (rucksacks.length) {
-    const set = [rucksacks.shift(), rucksacks.shift(), rucksacks.shift()]
-    const intersections = findIntersection(set as string[])
+    const set = [rucksacks.shift() ?? '', rucksacks.shift() ?? '', rucksacks.shift() ?? '']
+    const intersections = findIntersection(set)
     total += getPriority(intersections[0])
   }
 
