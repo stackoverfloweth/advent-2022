@@ -55,5 +55,3 @@ procedures.forEach(procedure => {
 const lastCrates = stacks.map(stack => stack.pop())
 
 console.log(lastCrates.join(''))
-
-// SGPLZH
