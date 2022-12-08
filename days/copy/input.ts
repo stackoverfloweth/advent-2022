@@ -1,3 +1,7 @@
-export const demo = ''
+export const demo = `
 
-export const input = ''
+`.trim()
+
+export const input = `
+
+`.trim()
