@@ -61,10 +61,15 @@ class Monkey {
   }
 }
 
-const monkeys = demo.split('\n\n').map(input => new Monkey(input))
+const monkeys = new Map<number, Monkey>()
+demo.split('\n\n').forEach(input => {
+  const monkey = new Monkey(input)
+
+  monkeys.set(monkey.id, monkey)
+})
 
 function passToMonkey(id: number, item: bigint): void {
-  monkeys.find(monkey => monkey.id === id)?.items.push(item)
+  monkeys.get(id)?.items.push(item)
 }
 
 function startTurn(monkey: Monkey): void {
@@ -80,7 +85,7 @@ function startTurn(monkey: Monkey): void {
 }
 
 function startRound(): void {
-  for (const monkey of monkeys) {
+  for (const [, monkey] of monkeys) {
     startTurn(monkey)
   }
 }
@@ -94,7 +99,7 @@ function calculateMonkeyBusiness(): number {
     startRound()
   }
 
-  const [highest, secondHighest] = sortByInspectionCount(monkeys)
+  const [highest, secondHighest] = sortByInspectionCount(Array.from(monkeys.values()))
   console.log([highest, secondHighest])
   return highest.inspectionCount * secondHighest.inspectionCount
 }
