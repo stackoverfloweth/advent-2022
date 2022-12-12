@@ -2,7 +2,7 @@
   "compilerOptions": {
     "strictNullChecks": true,
     "module": "commonjs",
-    "target": "ESNext",
+    "target": "ES6",
     "lib":["es2020", "dom"],
     "noImplicitAny": true,
     "resolveJsonModule": true,
