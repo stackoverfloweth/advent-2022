@@ -1,12 +1,12 @@
-import { demo } from './input'
+import { input } from './input'
 
 class Monkey {
   public id: number
-  public items: bigint[]
+  public items: number[]
   public inspectionCount: number = 0
-  private readonly operation: (number1: bigint, number2: bigint) => bigint
-  private readonly operand: bigint | undefined
-  private readonly denominator: bigint
+  public readonly denominator: number
+  private readonly operation: (number1: number, number2: number) => number
+  private readonly operand: number | undefined
   private readonly assignments: number[]
 
   public constructor(input: string) {
@@ -30,45 +30,59 @@ class Monkey {
 
     const [id, starting, inspect, test, ifTrue, ifFalse] = lines
     this.id = parseInt(id)
-    this.items = starting.split(', ').map(x => BigInt(x))
+    this.items = starting.split(', ').map(x => Number(x))
     const [operation, operand] = inspect.split(' ')
     this.operation = operation === '*' ? this.multiply : this.add
-    this.operand = operand === 'old' ? undefined : BigInt(operand)
-    this.denominator = BigInt(test)
+    this.operand = operand === 'old' ? undefined : Number(operand)
+    this.denominator = Number(test)
     this.assignments = [ifFalse, ifTrue].map(Number)
   }
 
-  public inspect(item: bigint): bigint {
+  public inspect(item: number): number {
     this.inspectionCount ++
 
-    return this.operation(item, this.operand ?? item)
+    return this.operation(item, this.operand ?? item) % lcm
   }
 
-  public getNextMonkey(item: bigint): number {
+  public getNextMonkey(item: number): number {
     return this.assignments[Number(this.test(item))]
   }
 
-  private test(item: bigint): boolean {
-    return item % this.denominator === 0n
+  private test(item: number): boolean {
+    return item % this.denominator === 0
   }
 
-  private multiply(number1: bigint, number2: bigint): bigint {
+  private multiply(number1: number, number2: number): number {
     return number1 * number2
   }
 
-  private add(number1: bigint, number2: bigint): bigint {
+  private add(number1: number, number2: number): number {
     return number1 + number2
   }
 }
 
+function leastCommonMultiple(...args: number[]): number {
+  const max = Math.max(...args)
+
+  let i = max
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, no-constant-condition
+  while (true) {
+    if (args.every(arg => i % arg === 0)) {
+      return i
+    }
+    i += max
+  }
+}
+
 const monkeys = new Map<number, Monkey>()
-demo.split('\n\n').forEach(input => {
+input.split('\n\n').forEach(input => {
   const monkey = new Monkey(input)
 
   monkeys.set(monkey.id, monkey)
 })
+const lcm = leastCommonMultiple(...Array.from(monkeys.values()).map(monkey => monkey.denominator))
 
-function passToMonkey(id: number, item: bigint): void {
+function passToMonkey(id: number, item: number): void {
   monkeys.get(id)?.items.push(item)
 }
 
@@ -100,7 +114,6 @@ function calculateMonkeyBusiness(): number {
   }
 
   const [highest, secondHighest] = sortByInspectionCount(Array.from(monkeys.values()))
-  console.log([highest, secondHighest])
   return highest.inspectionCount * secondHighest.inspectionCount
 }
 
