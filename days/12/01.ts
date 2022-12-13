@@ -1,55 +1,92 @@
 /* eslint-disable id-length */
 import { input } from './input'
-import { Path } from './path'
 import { Point } from './point'
 
-const map = input.split('\n').map((row, x) => row.split('').map((key, y) => new Point(x, y, key)))
-const [start] = map.find(row => row.find(point => point.key === 'S'))!
-let paths: Path[] = [new Path(start)]
-const completedPaths: Path[] = []
+export function getPointsByKey(map: Map<string, Point>, key: string): Point[] {
+  const points = []
 
-const directions = [
-  ({ x, y }: Point) => [x - 1, y],
-  ({ x, y }: Point) => [x, y - 1],
-  ({ x, y }: Point) => [x + 1, y],
-  ({ x, y }: Point) => [x, y + 1],
-]
-
-function getPoint(x: number, y: number): Point | undefined {
-  try {
-    return map[x][y]
-  } catch {
-    return undefined
+  for (const point of map.values()) {
+    if (point.key === key) {
+      points.push(point)
+    }
   }
+
+  return points
 }
 
-function getMinimumCompletedDistance(): number {
-  return completedPaths.reduce((smallest, path) => {
-    return path.distance < smallest ? path.distance : smallest
-  }, 30)
+export function buildMap(input: string): Map<string, Point> {
+  const map = new Map<string, Point>()
+
+  input.split('\n').forEach((row, x) => row.split('').forEach((key, y) => {
+    const point = new Point(x, y, key)
+
+    map.set(getKey(map, point), point)
+  }))
+
+  return map
 }
 
-while (paths.length > 0) {
-  const nextPaths: Path[] = []
+export function getKey(map: Map<string, Point>, point: Point): string
+// eslint-disable-next-line no-redeclare, @typescript-eslint/unified-signatures
+export function getKey(map: Map<string, Point>, [x, y]: [number, number]): string
+// eslint-disable-next-line no-redeclare
+export function getKey(map: Map<string, Point>, pointOrCoordinates: Point | [number, number]): string {
+  if (pointOrCoordinates instanceof Point) {
+    return getKey(map, [pointOrCoordinates.x, pointOrCoordinates.y])
+  }
 
-  paths.forEach(path => {
-    directions.forEach(direction => {
-      const [x, y] = direction(path.current)
+  const [x, y] = pointOrCoordinates
 
-      const point = getPoint(x, y)
-      if (point && path.canTravelTo(point)) {
-        const nextPath = path.travel(point)
+  return `${x}:${y}`
+}
 
-        if (nextPath.isAtFinish) {
-          completedPaths.push(nextPath)
-        } else if (nextPath.distance < getMinimumCompletedDistance()) {
-          nextPaths.push(nextPath)
-        }
+export function visitPoint(map: Map<string, Point>, point: Point): void {
+  const neighbors = [
+    [-1, 0],
+    [0, -1],
+    [1, 0],
+    [0, 1],
+  ]
+
+  neighbors.forEach(([x, y]) => {
+    const key = getKey(map, [point.x + x, point.y + y])
+
+    if (map.has(key)) {
+      const neighbor = map.get(key)!
+
+      if (point.canVisit(neighbor) && neighbor.totalDistance > point.totalDistance + 1) {
+        neighbor.totalDistance = point.totalDistance + 1
       }
-    })
+    }
   })
 
-  paths = nextPaths
+  point.visited = true
 }
 
-console.log(getMinimumCompletedDistance())
+export function getUnvisitedNodes(map: Map<string, Point>): Point[] {
+  return Array.from(map.values())
+    .filter(x => !x.visited)
+    .sort((a, b) => a.totalDistance - b.totalDistance)
+}
+
+export function getShortestDistance(map: Map<string, Point>, start: Point, end: Point): number {
+  start!.totalDistance = 0
+
+  let unvisitedNodes = getUnvisitedNodes(map)
+  while (unvisitedNodes.length) {
+    visitPoint(map, unvisitedNodes[0])
+    unvisitedNodes = getUnvisitedNodes(map)
+  }
+
+  return end.totalDistance
+}
+
+function solve(): void {
+  const map = buildMap(input)
+  const [start] = getPointsByKey(map, 'S')
+  const [end] = getPointsByKey(map, 'E')
+
+  console.log(getShortestDistance(map, start, end))
+}
+
+// solve()
