@@ -15,7 +15,6 @@ let head: Position = [0, 0]
 let tail: Position = [0, 0]
 const tailHistory = new TailHistory()
 
-// eslint-disable-next-line id-length
 function move([x, y]: Position, direction: Direction): Position {
   switch (direction) {
     case 'R':
