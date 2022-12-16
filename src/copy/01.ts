@@ -1,1 +1,1 @@
-import { demo } from '@/copy/input'
+import { demo } from './input'
