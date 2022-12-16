@@ -1,4 +1,4 @@
-import { demo } from '@/15/input'
+import { input } from '@/15/input'
 
 type Position = [x: number, y: number]
 type Sensor = {
@@ -88,7 +88,7 @@ function solve(input: string, yAxis: number): void {
 
   let definitelyNotABeacon = 0
   const y = yAxis
-  for (let x = map.minX; x <= map.maxX; x++) {
+  for (let x = map.minX - 10000000; x <= map.maxX + 10000000; x++) {
     const position: Position = [x, y]
 
     if (map.isBeacon(position)) {
@@ -103,7 +103,5 @@ function solve(input: string, yAxis: number): void {
   console.log(definitelyNotABeacon)
 }
 
-solve(demo, 10)
-// solve(input, 2000000)
-
-// 4305665 too low
+// solve(demo, 10)
+solve(input, 2000000)
