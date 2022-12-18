@@ -1,11 +1,11 @@
-import { demo } from '@/17/input'
+import { input } from '@/16/input'
 
 const valves = new Map<string, Valve>()
 
 class Valve {
   public id: string
   public flowRate: number
-  public minutesOpen: number
+  public minutesOpen: number | null
   private readonly connectionIds: string[]
 
   public constructor(input: string) {
@@ -41,7 +41,7 @@ class Valve {
   }
 
   public get totalFlowRate(): number {
-    return this.minutesOpen * this.flowRate
+    return (this.minutesOpen ?? 0) * this.flowRate
   }
 }
 
@@ -91,40 +91,89 @@ function buildDistancesMap(): Map<string, Map<string, number>> {
   return distancesMap
 }
 
-function getAllPermutations(ids: string[], minutesRemaining: number): string[][] {
+function getValveSequences(ids: string[], minutesRemaining: number): string[][] {
   if (!ids.length || minutesRemaining <= 0) {
     return [[]]
   }
 
-  function openValve(valve: Valve): void {
-    minutesRemaining--
-    valve.minutesOpen = minutesRemaining
-  }
-
   return ids.flatMap(id => {
-    const distances = distancesMap.get(id)
-    const remaining = ids.filter(x => x !== id)
-    const [nextId] = remaining
-    const nextValve = valves.get(nextId)
+    const distancesFromValve = distancesMap.get(id)
+    const remainingValves = ids.filter(x => x !== id)
+    const valve = valves.get(id)
+    const [nextId] = remainingValves
 
-    if (nextValve && nextValve.flowRate > 0) {
-      openValve(nextValve)
+    if (valve && valve.flowRate > 0) {
+      const timeToOpenValve = 1
+      minutesRemaining -= timeToOpenValve
     }
 
-    const distanceToNextValve = distances?.get(nextId) ?? 0
+    const distanceToNextValve = distancesFromValve?.get(nextId) ?? 0
 
-    return getAllPermutations(remaining, minutesRemaining - distanceToNextValve)
+    return getValveSequences(remainingValves, minutesRemaining - distanceToNextValve)
       .map(x => [id, ...x])
   })
 }
 
-function solve(): void {
-  const valveIds = Array.from(valves.values()).map(valve => valve.id)
-  const allPermutations = getAllPermutations(valveIds, 30)
-
-  console.log(allPermutations.length)
+function resetValves(): void {
+  for (const [, valve] of valves) {
+    valve.minutesOpen = null
+  }
 }
 
-demo.split('\n').map(input => new Valve(input))
+function calculateFlow(sequence: string[]): number {
+  resetValves()
+  setValvesOpen(sequence)
+
+  return sequence.reduce((sum, id) => sum += valves.get(id)!.totalFlowRate, 0)
+}
+
+function setValvesOpen(sequence: string[]): void {
+  let current = valves.get('AA')!
+  let minutesRemaining = 30
+
+  for (const id of sequence) {
+    const distancesFromValve = distancesMap.get(current.id)!
+    const distanceToNextValve = distancesFromValve.get(id)!
+    if (minutesRemaining - 1 <= distanceToNextValve) {
+      return
+    }
+    minutesRemaining -= distanceToNextValve
+
+    const valve = valves.get(id)!
+
+    if (valve.flowRate > 0) {
+      minutesRemaining--
+      valve.minutesOpen = minutesRemaining
+    }
+
+    if (minutesRemaining <= 0) {
+      return
+    }
+
+    current = valve
+  }
+}
+
+function solve(): void {
+  const valveIds = Array.from(valves.values())
+    .filter(valve => valve.flowRate > 0)
+    .map(valve => valve.id)
+
+  const sequences = getValveSequences(valveIds, 30)
+  let maxFlowRate = 0
+  for (const sequence of sequences) {
+    const result = calculateFlow(sequence)
+
+    if (result > maxFlowRate) {
+      maxFlowRate = result
+      console.log(maxFlowRate, sequence)
+    }
+  }
+}
+
+input.split('\n').map(input => new Valve(input))
 const distancesMap = buildDistancesMap()
 solve()
+
+// 1251 too low
+// 1601 too low

@@ -15,6 +15,9 @@ export const input = `
 Valve TN has flow rate=0; tunnels lead to valves IX, ZZ
 Valve DS has flow rate=0; tunnels lead to valves IF, OU
 Valve OP has flow rate=0; tunnels lead to valves UH, ZQ
+Valve FS has flow rate=0; tunnels leValve TN has flow rate=0; tunnels lead to valves IX, ZZ
+Valve DS has flow rate=0; tunnels lead to valves IF, OU
+Valve OP has flow rate=0; tunnels lead to valves UH, ZQ
 Valve FS has flow rate=0; tunnels lead to valves IF, UH
 Valve WO has flow rate=0; tunnels lead to valves IS, RW
 Valve KQ has flow rate=0; tunnels lead to valves SI, WZ
